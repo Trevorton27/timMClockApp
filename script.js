@@ -1,75 +1,81 @@
+function renderClock() {
+  const time = new Date();
+  const minutes = leadingZero(time.getMinutes());
+  const seconds = leadingZero(time.getSeconds());
+  const hours = time.getHours();
+  const isAm = hours < 12 || hours === 0;
+  let amPm = isAm ? 'AM' : 'PM';
 
-const timeDisplay = document.getElementById('time-display');
-const dateDisplay = document.getElementById('date-display');
-
-
-
-
-
-function tickingClock() {
-    const today = new Date;
-    const minute = leadingZero(today.getMinutes());
-    const seconds = leadingZero(today.getSeconds());    
-    const militaryTime = today.getHours();
-    const standardTime =  get12HourTime(militaryTime);
-    const hour = leadingZero(standardTime);
-
-    const weekday = daysIndex[today.getDay()];
-    const month = monthsIndex[today.getMonth()];
-    const date = dateWithSuffix(today.getDate());
-    const year = today.getFullYear();
-    
-    timeDisplay.textContent = (hour + ":" + minute + ":" + seconds + " " + (militaryTime >= 12 ? 'PM' : 'AM'));
-    dateDisplay.textContent = (weekday + ", " + month + " " + date + ", " + year);
-
+  const timeDisplay = document.getElementById('time-display');
+  timeDisplay.textContent = `${formatHour(
+    hours
+  )}:${minutes}:${seconds} ${amPm}`;
 }
 
-function leadingZero(time) {
-    if (time < 10) {
-        return ("0" + time);
-    } else return time;
+function formatHour(hour) {
+  hour = hour >= 13 ? hour - 12 : hour;
+
+  hour = hour === 0 ? hour + 12 : hour;
+  return hour;
 }
 
-function get12HourTime(militaryTime) {
-    if (militaryTime === 0) {
-        return 12;
-    } else if (militaryTime > 12) {
-        return (militaryTime - 12)
-    } else return militaryTime;
+function leadingZero(number) {
+  return number < 10 ? '0' + number : number;
 }
 
+function renderDate() {
+  const today = new Date();
 
+  const weekday = daysIndex[today.getDay()];
+  const month = monthsIndex[today.getMonth()];
+  const date = dateWithSuffix(today.getDate());
+  const year = today.getFullYear();
+  const dateDisplay = document.getElementById('date-display');
+  dateDisplay.textContent = `${weekday}, ${month} ${date}, ${year}`;
+}
 
-    
-const daysIndex = ["Sunday", "Monday", "Tuesday", "Wednesday",
-                            "Thursday", "Friday", "Saturday"];
-        
+const daysIndex = [
+  'Sunday',
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday'
+];
 
-const monthsIndex = ["January", "February", "March", "April", "May", "June", "July",
-                            "August", "September", "October", "November", "December"];
-        
-            
+const monthsIndex = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December'
+];
+
 function dateWithSuffix(date) {
-        if (date == 1 || date == 21 || date == 31) {
-            return date + "st";
-        } else if (date == 2 || date == 22) {
-            return date + "nd";
-        } else if (date == 3 || date == 23) {
-            return date + "rd";
-        } else return date + "th";
+  if (date < 10 || date > 20) {
+    switch (date % 10) {
+      case 1:
+        return `${date}st`;
+      case 2:
+        return `${date}nd`;
+      case 3:
+        return `${date}rd`;
+    }
+  }
+  return `${date}th`;
 }
- 
-tickingClock();
-setInterval(tickingClock, 1000);
 
-
-
-
-
-    
-
-
-
-
-
-
+renderClock();
+renderDate();
+setInterval(() => {
+  renderClock();
+  renderDate();
+}, 1000);
